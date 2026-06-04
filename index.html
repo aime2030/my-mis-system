@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IndexedDB MIS</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <section id="loginPage" class="login-page">
+    <div class="login-card">
+      <h2 id="loginBrandTitle">SpeedUp MS</h2>
+      <p>Admin Login</p>
+      <div id="loginAlert"></div>
+      <form id="loginForm">
+        <label>Email</label>
+        <input class="input" type="email" id="loginEmail" required value="admin@example.com" />
+        <label>Password</label>
+        <input class="input" type="password" id="loginPassword" required value="admin123" />
+        <button class="btn" type="submit">Login</button>
+      </form>
+      <small>Default: admin@example.com / admin123</small>
+    </div>
+  </section>
+
+  <section id="appPage" class="hidden">
+    <button class="mobile-hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar-backdrop" onclick="closeSidebar()"></div>
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>ADMIN</h2>
+        <a href="#dashboard" class="nav-link active" data-page="dashboard">Dashboard</a>
+        <a href="#stock" class="nav-link" data-page="stock">Stock</a>
+        <a href="#invoices" class="nav-link" data-page="invoices">Invoices</a>
+        <a href="#settings" class="nav-link" data-page="settings">Settings</a>
+        <a href="#" id="logoutBtn" class="logout-link">Logout</a>
+      </aside>
+
+      <main class="main">
+        <section id="dashboard" class="page active-page">
+          <div class="topbar"><h1>Admin Dashboard</h1></div>
+          <div class="cards">
+            <div class="card"><h3>Total Stock Items</h3><div class="value" id="totalStockItems">0</div></div>
+            <div class="card"><h3>Total Stock Value</h3><div class="value" id="totalStockValue">RWF 0</div></div>
+            <div class="card"><h3>Total Invoices</h3><div class="value" id="totalInvoices">0</div></div>
+            <div class="card"><h3>Total Invoice Amount</h3><div class="value" id="totalInvoiceAmount">RWF 0</div></div>
+            <div class="card"><h3>Paid</h3><div class="value" id="paidAmount">RWF 0</div></div>
+            <div class="card"><h3>Unpaid / Partial</h3><div class="value" id="unpaidAmount">RWF 0</div></div>
+          </div>
+          <div class="grid-2 equal">
+            <div class="card"><h2>Today Analysis</h2><p><strong>Date:</strong> <span id="todayDate"></span></p><p><strong>Invoices:</strong> <span id="todayInvoices">0</span></p><p><strong>Amount:</strong> <span id="todayAmount">RWF 0</span></p></div>
+            <div class="card"><h2>Low Stock</h2><div id="lowStockList"></div></div>
+          </div>
+        </section>
+
+        <section id="stock" class="page">
+          <h1>Stock Management</h1>
+          <div id="stockAlert"></div>
+          <div class="grid-2">
+            <form class="form-box" id="stockForm">
+              <h2 id="stockFormTitle">Add Stock Item</h2>
+              <input type="hidden" id="stockId" />
+              <input class="input" id="itemName" placeholder="Stock name" required />
+              <input class="input" id="quantity" type="number" step="0.01" min="0" placeholder="Quantity" required />
+              <input class="input" id="unitPrice" type="number" step="0.01" min="0" placeholder="Unit price" required />
+              <div class="button-group"><button class="btn green" type="submit">Save Stock</button><button class="btn light" type="button" id="resetStockForm">Cancel</button></div>
+            </form>
+            <div class="card"><h2>Current Stock</h2><div class="table-wrapper"><table class="table"><thead><tr><th>Name</th><th>Qty</th><th>Unit Price</th><th>Total Value</th><th>Action</th></tr></thead><tbody id="stockTable"></tbody></table></div></div>
+          </div>
+        </section>
+
+        <section id="invoices" class="page">
+          <div id="invoiceListView">
+            <div class="invoice-top"><h1>Invoices / Receipts</h1><button class="btn green" id="showInvoiceForm">Create Invoice</button></div>
+            <div class="card"><h2>Invoices</h2><div class="table-wrapper"><table class="table"><thead><tr><th>No</th><th>Client</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="invoiceTable"></tbody></table></div></div>
+          </div>
+
+          <div id="invoiceFormView" class="hidden">
+            <h1>Create Invoice</h1>
+            <form class="form-box" id="invoiceForm">
+              <input class="input" id="clientName" placeholder="Client name" required />
+              <input class="input" id="clientPhone" placeholder="Phone" />
+              <input class="input" id="clientEmail" placeholder="Email" />
+              <input class="input" id="clientAddress" placeholder="Address" />
+              <input class="input" id="clientTin" placeholder="TIN" />
+              <input class="input" id="invoiceNumber" readonly required />
+              <div class="item-heading"><div>Stock / Item</div><div>Description</div><div>Qty</div><div>Unit Price</div><div>Total</div><div></div></div>
+              <div id="invoiceItemsWrapper"></div>
+              <button type="button" class="btn light" id="addInvoiceItem">Add Item</button>
+              <div class="grid-form-two">
+                <select class="input" id="invoiceStatus"><option value="unpaid">unpaid</option><option value="partial">partial</option><option value="paid">paid</option></select>
+                <input class="input" type="date" id="invoiceDate" />
+              </div>
+              <div class="invoice-total-box"><strong>Total:</strong> <span id="invoiceTotal">RWF 0</span></div>
+              <div class="button-group"><button class="btn green" type="submit">Save Invoice</button><button type="button" class="btn light" id="cancelInvoice">Cancel</button></div>
+            </form>
+          </div>
+
+          <div id="invoicePreview" class="hidden card report-table"></div>
+        </section>
+
+        <section id="settings" class="page">
+          <h1>Settings</h1>
+          <div id="settingsAlert"></div>
+          <div class="grid-2 equal">
+            <form class="form-box" id="settingsForm">
+              <h2>Invoice Branding</h2>
+              <input class="input" id="companyName" placeholder="Company name" />
+              <input class="input" id="companyLocation" placeholder="Company location/address" />
+              <input class="input" id="companyPhone" placeholder="Company phone" />
+              <input class="input" id="companyTin" placeholder="TIN/VAT" />
+              <input class="input" id="companyEmail" placeholder="Company email" />
+              <input class="input" id="directorName" placeholder="Director name" />
+              <label>Company Logo</label>
+              <input class="input" id="companyLogo" type="file" accept="image/*" />
+              <label>Director Signature</label>
+              <input class="input" id="directorSignature" type="file" accept="image/*" />
+              <button class="btn green" type="submit">Save Settings</button>
+            </form>
+            <div class="card">
+              <h2>Current Branding Preview</h2>
+              <div id="brandingPreview"></div>
+              <hr>
+              <h2>Login Account</h2>
+              <p><strong>Email:</strong> admin@example.com</p>
+              <p><strong>Password:</strong> admin123</p>
+              <p>You can change these inside app.js later if needed.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <footer>Mobile Browser MIS using IndexedDB</footer>
+  </section>
+  <script src="app.js"></script>
+</body>
+</html>
