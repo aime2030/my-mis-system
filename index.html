@@ -14,11 +14,12 @@
       <div id="loginAlert"></div>
       <form id="loginForm">
         <label>Email</label>
-        <input class="input" type="email" id="loginEmail" required value="" />
+        <input class="input" type="email" id="loginEmail" required value="admin@example.com" />
         <label>Password</label>
-        <input class="input" type="password" id="loginPassword" required value="" />
+        <input class="input" type="password" id="loginPassword" required value="admin123" />
         <button class="btn" type="submit">Login</button>
       </form>
+      <small>Default: admin@example.com / admin123</small>
     </div>
   </section>
 
@@ -70,18 +71,95 @@
 
         <section id="invoices" class="page">
           <div id="invoiceListView">
-            <div class="invoice-top"><h1>Invoices / Receipts</h1><button class="btn green" id="showInvoiceForm">Create Invoice</button></div>
+            <div class="invoice-top"><h1>Invoices / Receipts</h1><div class="button-group top-buttons"><button class="btn light" id="showBoxManager">Box Details</button><button class="btn green" id="showInvoiceForm">Create Invoice</button></div></div>
             <div class="card"><h2>Invoices</h2><div class="table-wrapper"><table class="table"><thead><tr><th>No</th><th>Client</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="invoiceTable"></tbody></table></div></div>
           </div>
 
+          <div id="boxManagerView" class="hidden">
+            <div class="invoice-top">
+              <h1>Box Details</h1>
+              <div class="button-group top-buttons">
+                <button class="btn light" id="backFromBoxes" type="button">Back</button>
+              </div>
+            </div>
+            <div id="boxAlert"></div>
+            <div class="grid-2">
+              <form class="form-box" id="boxForm">
+                <h2>Upload / Register Button Box</h2>
+                <p class="muted">Add one box, number of buttons inside it, and price for one button.</p>
+                <input type="hidden" id="boxId" />
+                <input class="input" id="boxName" placeholder="Box name or box number" required />
+                <input class="input" id="boxButtons" type="number" min="0" step="1" placeholder="Number of buttons in this box" required />
+                <input class="input" id="boxPrice" type="number" min="0" step="0.01" placeholder="Price for one button" required />
+                <div class="button-group">
+                  <button class="btn green" type="submit">Save Button Box</button>
+                  <button class="btn light" type="button" id="resetBoxForm">Cancel</button>
+                </div>
+              </form>
+              <div class="card">
+                <h2>Uploaded Button Boxes</h2>
+                <div class="table-wrapper">
+                  <table class="table">
+                    <thead>
+                      <tr><th>Box</th><th>Buttons Left</th><th>Price / Button</th><th>Total Value</th><th>Action</th></tr>
+                    </thead>
+                    <tbody id="boxTable"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="invoiceDetailView" class="hidden">
+            <div class="invoice-top">
+              <h1>Invoice Details</h1>
+              <div class="button-group top-buttons">
+                <button class="btn light" id="backFromInvoiceDetails" type="button">Back to Create Invoice</button>
+                <button class="btn" id="openBoxDetailsFromDetail" type="button">Box Details</button>
+              </div>
+            </div>
+            <div class="card invoice-detail-box">
+              <h3>Add Buttons From Boxes</h3>
+              <p>Select a box, enter how many buttons the client needs, then add it to this invoice detail. You can add buttons from more than one box.</p>
+              <div class="grid-form-two">
+                <select class="input" id="invoiceBoxSelect"><option value="">Choose uploaded button box</option></select>
+                <input class="input" id="invoiceBoxCount" type="number" min="0" step="1" placeholder="Number of buttons client needs" />
+              </div>
+              <div class="box-button-grid">
+                <button type="button" data-box="1">1</button>
+                <button type="button" data-box="2">2</button>
+                <button type="button" data-box="3">3</button>
+                <button type="button" data-box="4">4</button>
+                <button type="button" data-box="5">5</button>
+                <button type="button" data-box="6">6</button>
+                <button type="button" data-box="7">7</button>
+                <button type="button" data-box="8">8</button>
+                <button type="button" data-box="9">9</button>
+                <button type="button" data-box="10">10</button>
+                <button type="button" data-box="11">11</button>
+                <button type="button" data-box="12">12</button>
+              </div>
+              <div id="boxRemainingPreview" class="mini-summary">No box selected.</div>
+              <div class="button-group">
+                <button class="btn green" id="addBoxToInvoiceDetail" type="button">Add to Invoice Detail</button>
+                <button class="btn light" id="clearInvoiceBoxSelection" type="button">Clear Selection</button>
+              </div>
+            </div>
+            <div class="card">
+              <h2>Current Invoice Box Details</h2>
+              <div id="invoiceBoxLinesList" class="mini-summary">No box added to this invoice yet.</div>
+            </div>
+          </div>
+
           <div id="invoiceFormView" class="hidden">
-            <h1>Create Invoice</h1>
+            <div class="invoice-top"><h1>Create Invoice</h1><div class="button-group top-buttons"><button class="btn light" id="showInvoiceDetailsFromForm" type="button">Invoice Details</button><button class="btn light" id="showBoxManagerFromForm" type="button">Box Details</button></div></div>
             <form class="form-box" id="invoiceForm">
               <input class="input" id="clientName" placeholder="Client name" required />
               <input class="input" id="clientPhone" placeholder="Phone" />
               <input class="input" id="clientEmail" placeholder="Email" />
               <input class="input" id="clientAddress" placeholder="Address" />
               <input class="input" id="clientTin" placeholder="TIN" />
+              <div class="mini-summary" id="invoiceDetailSummary">No button box selected. Use Invoice Details if the client needs buttons from a box.</div>
               <input class="input" id="invoiceNumber" readonly required />
               <div class="item-heading"><div>Stock / Item</div><div>Description</div><div>Qty</div><div>Unit Price</div><div>Total</div><div></div></div>
               <div id="invoiceItemsWrapper"></div>
